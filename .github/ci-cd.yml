@@ -1,0 +1,71 @@
+name: Node.js App with Docker and SQL Database on macOS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: macos-latest # Use macOS runner
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14 # Adjust the Node.js version as needed
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Docker image
+        run: |
+          docker build -t my-node-app .
+          docker tag my-node-app:latest my-node-app:$(date +%s)
+        working-directory: ./path/to/your/node/app
+
+      - name: Start SQL Database Container
+        run: |
+          docker run -d \
+            --name my-sql-database \
+            -e MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} \
+            -e MYSQL_DATABASE=mydb \
+            -p 3306:3306 \
+            mysql:latest
+        env:
+          MYSQL_DATABASE: mydb
+
+      - name: Wait for Database to Start
+        run: |
+          while ! nc -z localhost 3306; do
+            sleep 1
+          done
+
+      - name: Run Database Migrations
+        run: npm run migrate # Replace with your database migration command
+
+      - name: Run Node.js App in Docker Container
+        run: |
+          docker run -d \
+            --name my-node-app-container \
+            -p 8080:8080 \
+            --link my-sql-database:mysql \
+            my-node-app:latest
+        env:
+          DATABASE_URL: mysql://root:${{ secrets.MYSQL_ROOT_PASSWORD }}@my-sql-database:3306/mydb
+        ports:
+          - 8080:8080
+
+      - name: Check if Node.js App is Running
+        run: curl -sSf http://localhost:8080 || exit 1
+
+      - name: Deploy to Hosting Service (e.g., AWS, Heroku)
+        run: |
+          # Add your deployment script here
+          # This step depends on how you deploy your Node.js app to your hosting service
+          # You might use AWS CLI, Heroku CLI, or another deployment method
+
+    # Add additional steps here, such as running tests, notifications, etc.
