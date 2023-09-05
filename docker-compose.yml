@@ -1,0 +1,21 @@
+version: '3'
+services:
+  web:
+    image: node:14 # Use an official Node.js image
+    container_name: nodejs-app
+    working_dir: /app
+    volumes:
+      - ./app:/app # Mount your Node.js application code
+    ports:
+      - "3000:3000" # Expose your Node.js app on port 3000
+    environment:
+      - NODE_ENV=production # Set your Node.js environment (e.g., development, production)
+    command: npm start # Start your Node.js application
+
+  db:
+    image: postgres:latest # Use an official PostgreSQL image
+    container_name: postgres-db
+    environment:
+      - POSTGRES_USER=nodejs'root'
+      - POSTGRES_PASSWORD=''
+      - POSTGRES_DB='clubs'
