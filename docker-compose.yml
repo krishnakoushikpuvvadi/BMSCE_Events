@@ -15,6 +15,7 @@ services:
   db:
     image: postgres:latest # Use an official PostgreSQL image
     container_name: postgres-db
+    
     environment:
       - POSTGRES_USER=nodejs'root'
       - POSTGRES_PASSWORD=''
