@@ -1,4 +1,57 @@
-name: Node.js App with Docker and SQL Database on macOS
+# name: Node.js CI
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   build:
+#     runs-on: macos-latest
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v2
+#         with:
+#           node-version: 14
+
+#       - name: Install dependencies
+#         run: npm install
+
+#       - name: Run tests
+#         run: npm test
+
+#   - name: Cache Node.js modules
+#   uses: actions/cache@v2
+#   with:
+#     path: ~/.npm
+#     key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+#     restore-keys: |
+#       ${{ runner.os }}-node-
+
+# - name: Set environment variables
+#   run: |
+#     echo "NODE_ENV=production" >> $GITHUB_ENV
+#     echo "API_KEY=${{ secrets.API_KEY }}" >> $GITHUB_ENV
+
+# - name: Publish Artifacts
+#   uses: actions/upload-artifact@v2
+#   with:
+#     name: my-app-artifact
+#     path: path/to/artifacts
+
+# - name: Build and Deploy
+#   run: |
+#     npm run build
+#     npm run deploy
+#   env:
+#     CI: true
+
+
+name: Node.js CI on macOS
 
 on:
   push:
@@ -6,66 +59,20 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
-    runs-on: macos-latest # Use macOS runner
+  build:
+    runs-on: macos-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 14 # Adjust the Node.js version as needed
+          node-version: 14
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build Docker image
-        run: |
-          docker build -t node-app-image .
-          docker tag node-app-image:latest node-app-image:$(date +%s)
-        working-directory: ./path/to/your/node/app
-
-      - name: Start SQL Database Container
-        run: |
-          docker run -d \
-            --name my-sql-database \
-            -e MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} \
-            -e MYSQL_DATABASE=mydb \
-            -p 3306:3306 \
-            mysql:latest
-        env:
-          MYSQL_DATABASE: mydb
-
-      - name: Wait for Database to Start
-        run: |
-          while ! nc -z localhost 3000; do
-            sleep 1
-          done
-
-      - name: Run Database Migrations
-        run: npm run migrate # Replace with your database migration command
-
-      - name: Run Node.js App in Docker Container
-        run: |
-          docker run -d \
-            --name node-app-image \
-            -p 3000:3000 \
-            --link my-sql-database:mysql \
-            node-aoo-image:latest
-        env:
-          DATABASE_URL: mysql://root:${{ secrets.MYSQL_ROOT_PASSWORD }}@my-sql-database:3306/mydb
-        ports:
-          - 3000:3000
-
-      - name: Check if Node.js App is Running
-        run: curl -sSf http://localhost:3000 || exit 1
-
-      - name: Deploy to Hosting Service (e.g., AWS, Heroku)
-        run: |
-          # Add your deployment script here
-          # This step depends on how you deploy your Node.js app to your hosting service
-          # You might use AWS CLI, Heroku CLI, or another deployment method
-
-    # Add additional steps here, such as running tests, notifications, etc.
+      - name: Run tests
+        run: npm test
