@@ -46,5 +46,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: krishnakoushik1/dev_ops1-node-app
+          tags: krishnakoushik1/dev_ops1-sql
 

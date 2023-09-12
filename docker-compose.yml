@@ -1,22 +1,32 @@
-version: "3"
+version: "3.9"
 services:
-  mysql:
-    image: node-app-image
-    container_name: node-app
-    restart: always
+  backend:
+    build:
+      context: ./backend  # Path to the directory containing your backend code and Dockerfile
+    container_name: sql
+    ports:
+      - "3000:3000"  # Map the container's port 3000 to the host's port 3000
+    environment:
+      - NODE_ENV=production  # Set your desired environment variables here
     networks:
-      - app-network
+      - app-network  # Define a user-defined bridge network for your services
+    depends_on:
+      - database  # Add other services your backend depends on here
+
+  database:
+    image: mysql:latest  # Use an official MySQL image or specify your preferred database image
+    container_name: sql
     environment:
       MYSQL_ROOT_PASSWORD: ''
       MYSQL_DATABASE: 'clubs'
-    ports:
-      - "3000:3000"
+    networks:
+      - app-network
 
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: my-node-app
+    container_name: sql
     ports:
       - "3000:3000"
     depends_on:
