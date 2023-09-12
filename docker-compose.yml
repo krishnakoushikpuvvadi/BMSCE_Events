@@ -22,11 +22,11 @@ services:
     depends_on:
       - mysql
     environment:
-      - MYSQL_HOST='localhost'
+      - MYSQL_HOST=localhost
       - MYSQL_PORT=3000
-      - MYSQL_USER='root'
+      - MYSQL_USER=root
       - MYSQL_PASSWORD=''
-      - MYSQL_DATABASE='clubs'
+      - MYSQL_DATABASE=clubs
     networks:
       - app-network
 
