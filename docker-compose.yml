@@ -1,22 +1,35 @@
-version: '3'
+version: "3.9"
 services:
-  web:
-    image: node:14 # Use an official Node.js image
-    container_name: nodejs-app
-    working_dir: /app
-    volumes:
-      - ./app:/app # Mount your Node.js application code
+  mysql:
+    image: node-app-image
+    container_name: node-app
+    restart: always
+    networks:
+      - app-network
+    environment:
+      MYSQL_ROOT_PASSWORD: ''
+      MYSQL_DATABASE: 'clubs'
     ports:
-      - "3000:3000" # Expose your Node.js app on port 3000
-    environment:
-      - NODE_ENV=production # Set your Node.js environment (e.g., development, production)
-    command: npm start # Start your Node.js application
+      - "3000:3000"
 
-  db:
-    image: postgres:latest # Use an official PostgreSQL image
-    container_name: postgres-db
-    
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: my-node-app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
     environment:
-      - POSTGRES_USER=nodejs'root'
-      - POSTGRES_PASSWORD=''
-      - POSTGRES_DB='clubs'
+      - MYSQL_HOST='localhost'
+      - MYSQL_PORT=3000
+      - MYSQL_USER='root'
+      - MYSQL_PASSWORD=''
+      - MYSQL_DATABASE='clubs'
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
