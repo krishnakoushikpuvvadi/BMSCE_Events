@@ -79,6 +79,31 @@
     var length = document.getElementById("length");
 
 
+    var usnInput = document.getElementById("USN");
+
+usnInput.addEventListener("input", function () {
+  var usnPattern = /^[1-9][A-Z]{2}\d{2}[A-Z]{2}\d{3}$/;
+
+  if (usnPattern.test(usnInput.value)) {
+    usnInput.setCustomValidity("");
+  } else {
+    usnInput.setCustomValidity("Enter a valid USN (e.g., 1BM21CS264)");
+  }
+});
+
+
+var emailInput = document.getElementById("email");
+
+emailInput.addEventListener("input", function () {
+  var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+
+  if (emailPattern.test(emailInput.value)) {
+    emailInput.setCustomValidity("");
+  } else {
+    emailInput.setCustomValidity("Enter a valid email address");
+  }
+});
+
     myInput.onfocus = function () {
       document.getElementById("message").style.display = "block";
     }

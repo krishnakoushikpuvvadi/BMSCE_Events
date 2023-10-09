@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= eventData[0].event_name %></title>
+    <link rel="stylesheet" href="css/EventJoin.css">
+</head>
+<body>
+    <h1><%= eventData[0].event_name %></h1>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone number</th>
+            <th>Branch</th>
+            <th>Year</th>
+        </tr>
+        <% for (let i = 0; i < eventData.length; i++) { %>
+        <tr>
+            <td><%= eventData[i].name %></td>
+            <td><%= eventData[i].stud_email %></td>
+            <td><%= eventData[i].phone %></td>
+            <td><%= eventData[i].branch %></td>
+            <td><%= eventData[i].year %></td>
+        </tr>
+        <% } %>
+    </table>
+</body>
+</html>
